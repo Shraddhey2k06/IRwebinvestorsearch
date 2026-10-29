@@ -1,0 +1,84 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#142747">
+  <title>PSF '27 | Investor Relations</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<header class="topbar">
+  <div class="brand">PSF <span>'27</span></div>
+  <div class="brand-copy"><strong>Investor Relations</strong><small>COEP Technological University · 30–31 January 2027</small></div>
+  <button id="logoutBtn" class="btn btn-ghost hidden" type="button">Log out</button>
+</header>
+<main>
+  <div class="notice"><strong>Prototype:</strong> Name/role selection is not secure authentication. Use dummy data only until backend access is restricted and verified.</div>
+  <section id="loginView" class="panel login-panel">
+    <p class="eyebrow">PSF 2027 · TEAM WORKSPACE</p>
+    <h1>Investor outreach, coordinated.</h1>
+    <p class="muted">Search before contacting. Keep outreach history in one shared place.</p>
+    <form id="loginForm">
+      <label for="memberName">Team member</label>
+      <select id="memberName" required><option value="">Loading team list…</option></select>
+      <label for="role">Role</label>
+      <select id="role" required>
+        <option>Head</option><option>Coordinator</option><option>Volunteer</option>
+      </select>
+      <button class="btn btn-primary full" type="submit">Open dashboard</button>
+    </form>
+    <p class="tiny muted">The selected role is not proof of identity. Do not use this prototype for confidential data.</p>
+  </section>
+
+  <section id="appView" class="hidden">
+    <div class="welcome">
+      <div><p class="eyebrow">TEAM DASHBOARD</p><h1>Welcome, <span id="welcomeName"></span></h1><p id="welcomeRole" class="muted"></p></div>
+      <span class="event-pill">PSF '27</span>
+    </div>
+    <div class="stats">
+      <article class="stat"><span>My outreach</span><strong id="myCount">0</strong></article>
+      <article class="stat"><span>Confirmed</span><strong id="confirmedCount">0</strong></article>
+      <article class="stat"><span>Not confirmed</span><strong id="unconfirmedCount">0</strong></article>
+    </div>
+
+    <section class="panel">
+      <div class="section-heading"><div><h2>Find an investor</h2><p class="muted">Search the shared database before reaching out.</p></div></div>
+      <form id="searchForm" class="search-row">
+        <input id="searchQuery" minlength="2" placeholder="Investor or organization name" required>
+        <button class="btn btn-primary" type="submit">Search</button>
+      </form>
+      <div id="searchResults" class="results"><p class="muted">Search results will appear here.</p></div>
+    </section>
+
+    <section class="panel">
+      <h2>Record outreach</h2>
+      <p class="muted">Log each meaningful outreach or follow-up. Duplicate warnings appear after searching.</p>
+      <form id="outreachForm">
+        <div class="form-grid">
+          <div><label for="investorName">Investor name *</label><input id="investorName" maxlength="150" required placeholder="Full name"></div>
+          <div><label for="organization">Organization / fund</label><input id="organization" maxlength="150" placeholder="Optional"></div>
+          <div><label for="status">Visit confirmation *</label><select id="status" required><option>Not Confirmed</option><option>Confirmed</option></select></div>
+          <div><label for="remarks">Remarks (optional)</label><textarea id="remarks" maxlength="1000" rows="3" placeholder="Response, follow-up, relevant notes"></textarea></div>
+        </div>
+        <button class="btn btn-primary" type="submit">Save outreach</button>
+      </form>
+    </section>
+
+    <section class="panel">
+      <h2>My outreach history</h2>
+      <div id="myHistory"><p class="muted">Sign in to load records.</p></div>
+    </section>
+
+    <section id="headPanel" class="panel hidden">
+      <h2>Team overview</h2><p class="muted">Head view — available only in this prototype. Do not treat the role selection as secure authorization.</p>
+      <button id="loadHeadBtn" class="btn btn-secondary" type="button">Load all records</button>
+      <div id="headRecords"></div>
+    </section>
+  </section>
+</main>
+<div id="toast" role="status" aria-live="polite"></div>
+<footer>PSF '27 Investor Relations · Internal team tool</footer>
+<script src="app.js"></script>
+</body>
+</html>
