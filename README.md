@@ -1,60 +1,72 @@
-# PSF '27 Investor Relations Portal
+# PSF '27 Investor Relations — Duplicate Outreach Update
 
-A static frontend for GitHub Pages with a Google Apps Script backend and Google Sheets storage.
+This version keeps the existing name/role selection flow (no authentication added), removes the visible prototype warning banner, and adds a duplicate-outreach confirmation before updating an existing record.
 
-## Files
-- `index.html` — UI
-- `styles.css` — responsive styles
-- `app.js` — browser logic
-- `Code.gs` — paste into Google Apps Script
-- `README.md` — setup instructions
+## Included files
 
-## Important security limitation
-This version is a **prototype only**. Selecting a name and role is not authentication. Anyone who can reach a public Apps Script web app may forge a Head role or member name. The frontend cannot enforce access control. Do not use real investor/contact details until the backend is restricted to verified users and role permissions are derived from a trusted identity, not the request body.
+- `index.html` — page structure; visible prototype warning removed.
+- `styles.css` — existing styling.
+- `app.js` — frontend and duplicate confirmation prompt.
+- `Code.gs` — Google Apps Script API with duplicate detection and update-in-place logic.
 
-For production, prefer Google sign-in restricted to approved accounts and verify the signed-in identity server-side. If your team cannot use a shared Google Workspace/domain, implement a real identity provider. Do not put passwords, service-account keys, API secrets, or spreadsheet credentials in `app.js` or GitHub.
+## Expected Google Sheet tabs and headers
 
-## 1. Prepare Google Sheets
-Create a spreadsheet with three tabs and exact names:
+Keep these tabs and header rows as they are:
 
-### Investors (row 1)
+**Investors**
+
 `InvestorID | InvestorName | Organization | LatestStatus | LastContactedBy | LastContactDate | LatestRemarks`
 
-### OutreachLog (row 1)
+**OutreachLog**
+
 `OutreachID | InvestorID | InvestorName | TeamMember | Role | DateTime | Status | Remarks`
 
-### TeamMembers (row 1)
+**TeamMembers**
+
 `MemberID | MemberName | Role | Active`
 
-Use tabs between headings when pasting into Sheets. Add the 31 actual team members below the header. Roles must be exactly `Head`, `Coordinator`, or `Volunteer`; Active must be `TRUE` or `FALSE`.
+The script uses the spreadsheet ID already configured in `Code.gs`. Verify that it is the correct spreadsheet before deploying.
 
-## 2. Set up Apps Script
-1. Open https://script.google.com/ and create a project.
-2. Paste `Code.gs` into the editor.
-3. Replace `PASTE_YOUR_SPREADSHEET_ID_HERE` with the spreadsheet ID from its URL (between `/d/` and `/edit`).
-4. Save, select `testSpreadsheetConnection`, and run it. Approve spreadsheet access if prompted.
-5. Do not deploy publicly with real data while the prototype identity check is in place.
+## Duplicate outreach behavior
 
-## 3. Configure frontend
-1. Open `app.js`.
-2. Replace `PASTE_YOUR_APPS_SCRIPT_WEB_APP_URL_HERE` with your deployed Apps Script Web App URL.
-3. Apps Script browser requests can be affected by redirects and browser CORS behavior. Test the deployed frontend in your browser before relying on it. If cross-origin requests fail, use an authenticated backend/hosting architecture rather than disabling browser security.
+1. A user fills in the outreach form and clicks **Save outreach**.
+2. The backend checks whether the investor already has an outreach entry.
+3. If an existing entry is found, the backend returns the latest outreach details without writing anything.
+4. The website asks whether to update the existing entry with the values currently in the form.
+5. **OK** updates the existing `OutreachLog` row in place, keeps its `OutreachID`, and updates the `Investors` summary. It does not append another outreach row.
+6. **Cancel** leaves the spreadsheet unchanged.
+7. The update runs under a script lock. If the record changed after the warning was displayed, the backend asks the user to search again rather than updating a different row.
 
-## 4. Publish to GitHub Pages
-1. Create a GitHub repository, e.g. `psf27-investor-relations`.
-2. Upload `index.html`, `styles.css`, and `app.js` to the repository root.
-3. Commit the files.
-4. Open **Settings → Pages**.
-5. Under Build and deployment, choose **Deploy from a branch**, branch `main`, folder `/ (root)`, then Save.
-6. Wait for the published URL shown in Pages settings.
+The most recent outreach for the matched investor is updated. This does not create a separate audit-history row for previous field values.
 
-## 5. Test with dummy data only
-- Team list loads and names/roles are correct.
-- Searching returns a duplicate warning for an existing investor.
-- Submitting outreach creates a row in `OutreachLog`.
-- Confirmed/Not Confirmed and remarks are saved.
-- Test concurrent submissions and duplicate names.
-- Do not assume role permissions are secure until verified authentication is implemented.
+## Deploy the update
 
-## Data model
-Every outreach is stored in `OutreachLog` so follow-ups do not overwrite previous interactions. `Investors` stores the current summary for each investor. The current prototype identifies records by name plus organization when organization is supplied; ambiguous investor matches should be reviewed by a human.
+### 1. Update Apps Script
+
+1. Open the existing Apps Script project connected to the Google Sheet.
+2. Replace the contents of `Code.gs` with this folder's `Code.gs`.
+3. Save the project.
+4. Run `testSpreadsheetConnection` from the function dropdown and confirm it succeeds.
+5. Choose **Deploy → Manage deployments → Edit → New version → Deploy**. This updates the existing versioned deployment while retaining its URL. See [Google's deployment guide](https://developers.google.com/apps-script/concepts/deployments).
+
+### 2. Update GitHub Pages
+
+1. Open the repository used by the current GitHub Pages site.
+2. Replace `index.html`, `styles.css`, and `app.js` with the files in this folder.
+3. Commit and push the changes.
+4. Wait for GitHub Pages to publish, then hard-refresh the site (`Ctrl+F5`).
+
+The `API_URL` in `app.js` is set to the existing Apps Script web app URL. If your deployment URL has changed, update it there before publishing.
+
+## Test with dummy records
+
+1. Search for an investor with an existing `OutreachLog` entry.
+2. Enter updated status/remarks and click **Save outreach**.
+3. Confirm the warning identifies the previous contact.
+4. Choose **Cancel** and verify no sheet values changed.
+5. Repeat and choose **OK**; verify the same `OutreachID` row was updated and no extra `OutreachLog` row was appended.
+6. Submit a new investor and verify a new investor/outreach entry is created normally.
+
+## Important limitation
+
+The requested name/role selector is retained and no authentication has been added. Removing the visible warning does not make the app secure: a user may still select another member's name or role. Use dummy data only until identity verification and server-side permissions are implemented.

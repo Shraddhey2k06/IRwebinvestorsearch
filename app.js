@@ -1,6 +1,4 @@
 // PSF '27 Investor Relations frontend
-// DEMO ONLY: name/role selection is not authentication. Do not use real investor data
-// until the Apps Script backend is restricted to verified users.
 const API_URL = "https://script.google.com/macros/s/AKfycbzGfAcF9krvVsjAF3JJ-z3DZ6thz5jxZILvY8j9lN5pN5-dDx5mWzdE6NanZB369gD4Nw/exec";
 const $ = id => document.getElementById(id);
 let currentMember = null;
@@ -138,7 +136,33 @@ $("outreachForm").addEventListener("submit", async event => {
     remarks: $("remarks").value.trim()
   };
   try {
-    const result = await api("submit", payload);
+    let result = await api("submit", payload);
+
+    if (result.duplicateFound && result.existingOutreach) {
+      const previous = result.existingOutreach;
+      const previousDate = formatDate(previous.dateTime) || "Unknown date";
+      const message = [
+        `This investor already has outreach recorded: ${previous.investorName}.`,
+        `Last recorded by: ${previous.teamMember || "Unknown"}`,
+        `Date: ${previousDate}`,
+        `Previous status: ${previous.status || "Unknown"}`,
+        "",
+        "Do you want to update the existing outreach with the details currently in this form?",
+        "Choose OK to edit the existing record (no new outreach row will be created), or Cancel to leave it unchanged."
+      ].join("\n");
+
+      if (!window.confirm(message)) {
+        notify("Existing outreach left unchanged.");
+        return;
+      }
+
+      result = await api("submit", {
+        ...payload,
+        updateExisting: true,
+        outreachID: previous.outreachID
+      });
+    }
+
     notify(result.message || "Outreach saved.");
     $("outreachForm").reset();
     await loadMyOutreach();
