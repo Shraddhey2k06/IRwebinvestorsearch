@@ -104,6 +104,10 @@ $("searchForm").addEventListener("submit", async event => {
         const details = document.createElement("p");
         details.textContent = `Last contacted by ${investor.lastContactedBy || "Unknown"} · Status: ${investor.latestStatus || "Unknown"} · Date: ${investor.lastContactDate || "Unknown"}`;
         card.append(details);
+        const method = document.createElement("p");
+        method.className = "contact-method-detail";
+        method.textContent = "Contact method: " + (investor.contactMethod || "Not specified");
+        card.append(method);
       }
       if (investor.remarks) {
         const notes = document.createElement("p");
