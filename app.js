@@ -133,6 +133,7 @@ $("outreachForm").addEventListener("submit", async event => {
     investorName: $("investorName").value.trim(),
     organization: $("organization").value.trim(),
     status: $("status").value,
+    contactMethod: $("contactMethod").value,
     remarks: $("remarks").value.trim()
   };
   try {
@@ -146,6 +147,7 @@ $("outreachForm").addEventListener("submit", async event => {
         `Last recorded by: ${previous.teamMember || "Unknown"}`,
         `Date: ${previousDate}`,
         `Previous status: ${previous.status || "Unknown"}`,
+        `Previous contact method: ${previous.contactMethod || "Not specified"}`,
         "",
         "Do you want to update the existing outreach with the details currently in this form?",
         "Choose OK to edit the existing record (no new outreach row will be created), or Cancel to leave it unchanged."
@@ -184,9 +186,9 @@ async function loadMyOutreach() {
       return;
     }
     container.append(makeTable(
-      ["Investor", "Date", "Status", "Remarks"],
+      ["Investor", "Date", "Contact method", "Status", "Remarks"],
       records.slice().reverse().map(r => [
-        r.InvestorName, formatDate(r.DateTime), r.Status, r.Remarks || ""
+        r.InvestorName, formatDate(r.DateTime), r.ContactMethod || "Not specified", r.Status, r.Remarks || ""
       ])
     ));
   } catch (error) {
@@ -202,9 +204,9 @@ $("loadHeadBtn").addEventListener("click", async () => {
     summary.textContent = `${data.investors.length} investor(s) · ${data.outreach.length} outreach record(s)`;
     container.append(summary);
     container.append(makeTable(
-      ["Investor", "Member", "Role", "Status", "Date", "Remarks"],
+      ["Investor", "Member", "Role", "Contact method", "Status", "Date", "Remarks"],
       data.outreach.slice().reverse().map(r => [
-        r.InvestorName, r.TeamMember, r.Role, r.Status, formatDate(r.DateTime), r.Remarks || ""
+        r.InvestorName, r.TeamMember, r.Role, r.ContactMethod || "Not specified", r.Status, formatDate(r.DateTime), r.Remarks || ""
       ])
     ));
   } catch (error) {
