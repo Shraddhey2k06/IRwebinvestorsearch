@@ -18,24 +18,19 @@
     <div class="hero-event-pill">30–31 JANUARY 2027 <span>•</span> COEP TECHNOLOGICAL UNIVERSITY, PUNE</div>
   </section>
 
-  <section id="loginView" class="role-shelf" aria-label="Choose your PSF team book">
-    <iframe
-      id="roleShelfFrame"
-      class="role-shelf__frame"
-      title="Working Volumes — Seven Tools for Making"
-      src="landing-pages/complete-shelf-v2.html"
-      sandbox="allow-downloads allow-forms allow-modals allow-popups allow-same-origin allow-scripts"
-      loading="eager"
-    ></iframe>
-    <form id="loginForm" class="visually-hidden">
-      <select id="memberName" required aria-label="Selected team member"><option value="">Choose your book</option></select>
-      <select id="role" required aria-label="Assigned role">
+  <section id="loginView" class="panel login-panel">
+    <p class="eyebrow">PSF 2027 · TEAM WORKSPACE</p>
+    <h1>Investor outreach, coordinated.</h1>
+    <p class="muted">Search before contacting. Keep outreach history in one shared place.</p>
+    <form id="loginForm">
+      <label for="memberName">Team member</label>
+      <select id="memberName" required><option value="">Loading team list…</option></select>
+      <label for="role">Role</label>
+      <select id="role" required>
         <option>Head</option><option>Coordinator</option><option>Volunteer</option>
       </select>
+      <button class="btn btn-primary full" type="submit">Open dashboard</button>
     </form>
-    <div class="team-bookshelf" aria-label="PSF team member books">
-      <div id="memberBooks" class="member-books" role="listbox" aria-label="Choose your named book"></div>
-    </div>
   </section>
 
   <section id="appView" class="hidden">
