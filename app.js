@@ -3,6 +3,46 @@ const API_URL = "https://script.google.com/macros/s/AKfycbzGfAcF9krvVsjAF3JJ-z3D
 const $ = id => document.getElementById(id);
 let currentMember = null;
 let toastTimer;
+const ROLE_VALUES = ["Head", "Coordinator", "Volunteer"];
+
+function selectMember(member, selectedBook) {
+  const role = ROLE_VALUES.includes(member.role) ? member.role : "Volunteer";
+  $("memberName").value = member.name;
+  $("role").value = role;
+  $("selectedMemberName").textContent = member.name;
+  $("selectedMemberRole").textContent = role;
+  $("openDashboardBtn").disabled = false;
+  document.querySelectorAll("[data-member-book]").forEach(book => {
+    const selected = book === selectedBook;
+    book.setAttribute("aria-selected", String(selected));
+  });
+}
+
+function renderMemberBooks(members) {
+  const shelf = $("memberBooks");
+  shelf.replaceChildren();
+  members.forEach((member, index) => {
+    const book = document.createElement("button");
+    book.type = "button";
+    book.className = "member-book";
+    book.dataset.memberBook = String(index);
+    book.setAttribute("role", "option");
+    book.setAttribute("aria-selected", "false");
+    book.setAttribute("aria-label", `${member.name}, ${member.role}`);
+    const number = document.createElement("span");
+    number.className = "member-book__number";
+    number.textContent = String(index + 1).padStart(2, "0");
+    const name = document.createElement("span");
+    name.className = "member-book__name";
+    name.textContent = member.name;
+    const role = document.createElement("span");
+    role.className = "member-book__role";
+    role.textContent = member.role;
+    book.append(number, name, role);
+    book.addEventListener("click", () => selectMember(member, book));
+    shelf.append(book);
+  });
+}
 
 function notify(message) {
   const el = $("toast");
@@ -37,16 +77,13 @@ async function loadTeam() {
       option.dataset.role = m.role;
       select.add(option);
     });
-    $("role").value = "Volunteer";
+    renderMemberBooks(result.members);
   } catch (error) {
-    $("memberName").replaceChildren(new Option("Configure API URL to load team", ""));
+    $("memberName").replaceChildren(new Option("Team list unavailable", ""));
+    $("memberBooks").textContent = "Team books could not load.";
     notify("Team list could not load: " + error.message);
   }
 }
-$("memberName").addEventListener("change", () => {
-  const option = $("memberName").selectedOptions[0];
-  if (option && option.dataset.role) $("role").value = option.dataset.role;
-});
 $("loginForm").addEventListener("submit", async event => {
   event.preventDefault();
   const name = $("memberName").value;

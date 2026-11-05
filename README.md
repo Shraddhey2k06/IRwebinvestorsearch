@@ -90,3 +90,10 @@ The Apps Script backend automatically adds a `ContactMethod` header as a new fin
 2. Replace `index.html`, `styles.css`, and `app.js` in the GitHub Pages repository with the package files. Keep `psf27-logo.png` beside `index.html`.
 3. Commit/push and hard-refresh the website (`Ctrl+F5`).
 4. Submit a dummy outreach with Message, then Email, then Call; also test leaving the field blank. Confirm `OutreachLog` has a `ContactMethod` column and the correct values. Test duplicate update and verify it updates the existing row's method without adding a new row.
+
+
+## Investor search contact method
+
+Search results now include the contact method from the latest outreach record (Message, Email, Call, or “Not specified”). The Apps Script search response reads `ContactMethod` from the latest `OutreachLog` entry; no new spreadsheet column is required beyond the existing `ContactMethod` column.
+
+After replacing `Code.gs`, deploy a new Apps Script version. Replace `app.js` in GitHub Pages, commit, wait for publication, and hard-refresh the website.

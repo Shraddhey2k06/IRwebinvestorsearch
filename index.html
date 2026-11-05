@@ -18,19 +18,32 @@
     <div class="hero-event-pill">30–31 JANUARY 2027 <span>•</span> COEP TECHNOLOGICAL UNIVERSITY, PUNE</div>
   </section>
 
-  <section id="loginView" class="panel login-panel">
-    <p class="eyebrow">PSF 2027 · TEAM WORKSPACE</p>
-    <h1>Investor outreach, coordinated.</h1>
-    <p class="muted">Search before contacting. Keep outreach history in one shared place.</p>
-    <form id="loginForm">
-      <label for="memberName">Team member</label>
-      <select id="memberName" required><option value="">Loading team list…</option></select>
-      <label for="role">Role</label>
-      <select id="role" required>
-        <option>Head</option><option>Coordinator</option><option>Volunteer</option>
-      </select>
-      <button class="btn btn-primary full" type="submit">Open dashboard</button>
-    </form>
+  <section id="loginView" class="role-shelf" aria-labelledby="roleShelfTitle">
+    <iframe
+      id="roleShelfFrame"
+      class="role-shelf__frame"
+      title="Working Volumes — Seven Tools for Making"
+      src="landing-pages/complete-shelf-v2.html"
+      sandbox="allow-downloads allow-forms allow-modals allow-popups allow-same-origin allow-scripts"
+      loading="eager"
+    ></iframe>
+    <div class="role-shelf__gate">
+      <p class="eyebrow">PSF 2027 · INVESTOR RELATIONS</p>
+      <h1 id="roleShelfTitle">Choose your book</h1>
+      <p class="role-shelf__copy">Select your named volume from the PSF team shelf to open the shared investor workspace.</p>
+      <form id="loginForm">
+        <select id="memberName" class="visually-hidden" required aria-label="Selected team member"><option value="">Choose your book</option></select>
+        <select id="role" class="visually-hidden" required aria-label="Assigned role">
+          <option>Head</option><option>Coordinator</option><option>Volunteer</option>
+        </select>
+        <p class="selected-member" aria-live="polite"><span id="selectedMemberName">No book selected</span><span id="selectedMemberRole">Select your named book below</span></p>
+        <button id="openDashboardBtn" class="btn btn-primary full" type="submit" disabled>Open dashboard</button>
+      </form>
+    </div>
+    <div class="team-bookshelf" aria-label="PSF team member books">
+      <p class="team-bookshelf__label">PSF ’27 · TEAM VOLUMES</p>
+      <div id="memberBooks" class="member-books" role="listbox" aria-label="Choose your named book"></div>
+    </div>
   </section>
 
   <section id="appView" class="hidden">
