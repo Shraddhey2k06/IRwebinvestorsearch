@@ -9,9 +9,6 @@ function selectMember(member, selectedBook) {
   const role = ROLE_VALUES.includes(member.role) ? member.role : "Volunteer";
   $("memberName").value = member.name;
   $("role").value = role;
-  $("selectedMemberName").textContent = member.name;
-  $("selectedMemberRole").textContent = role;
-  $("openDashboardBtn").disabled = false;
   document.querySelectorAll("[data-member-book]").forEach(book => {
     const selected = book === selectedBook;
     book.setAttribute("aria-selected", String(selected));
@@ -39,7 +36,10 @@ function renderMemberBooks(members) {
     role.className = "member-book__role";
     role.textContent = member.role;
     book.append(number, name, role);
-    book.addEventListener("click", () => selectMember(member, book));
+    book.addEventListener("click", () => {
+      selectMember(member, book);
+      $("loginForm").requestSubmit();
+    });
     shelf.append(book);
   });
 }
